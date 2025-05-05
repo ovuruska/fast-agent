@@ -7,6 +7,7 @@ agents = FastAgent(name="Researcher Agent (EO)")
 
 @agents.agent(
     name="Researcher",
+    model="qwq-32",
     instruction="""
 You are a research assistant, with access to internet search (via Brave),
 website fetch, a python interpreter (you can install packages with uv) and a filesystem.
@@ -19,7 +20,7 @@ You must always provide a summary of the specific sources you have used in your 
 )
 @agents.agent(
     name="Evaluator",
-    model="sonnet",
+    model="qwq-32",
     instruction="""
 Evaluate the response from the researcher based on the criteria:
  - Sources cited. Has the researcher provided a summary of the specific sources used in the research?

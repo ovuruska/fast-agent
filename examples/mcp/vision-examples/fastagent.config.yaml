@@ -10,14 +10,14 @@
 # If not specified, defaults to "haiku". 
 # Can be overriden with a command line switch --model=<model>, or within the Agent constructor.
 
-default_model: haiku
-
+default_model: gpt-4.1-nano
+# default_model: deepinfra.Qwen/Qwen3-14B
 # Logging and Console Configuration:
 logger:
     # level: "debug" | "info" | "warning" | "error"
     # type: "none" | "console" | "file" | "http"
     # path: "/path/to/logfile.jsonl"
-
+    level: "info"
     
     # Switch the progress display on or off
     progress_display: true

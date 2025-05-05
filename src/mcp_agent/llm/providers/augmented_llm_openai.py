@@ -1,4 +1,5 @@
 from typing import Dict, List
+from datetime import datetime
 
 from mcp.types import (
     CallToolRequest,
@@ -34,6 +35,9 @@ from mcp_agent.llm.providers.sampling_converter_openai import (
 from mcp_agent.logging.logger import get_logger
 from mcp_agent.mcp.prompt_message_multipart import PromptMessageMultipart
 
+import typesense
+
+
 _logger = get_logger(__name__)
 
 DEFAULT_OPENAI_MODEL = "gpt-4.1-mini"
@@ -64,7 +68,7 @@ class OpenAIAugmentedLLM(AugmentedLLM[ChatCompletionMessageParam, ChatCompletion
             kwargs["type_converter"] = OpenAISamplingConverter
 
         super().__init__(*args, provider=provider, **kwargs)
-
+        self.session_id = kwargs.get("session_id", None)
         # Initialize logger with name if available
         self.logger = get_logger(f"{__name__}.{self.name}" if self.name else __name__)
 
@@ -162,9 +166,7 @@ class OpenAIAugmentedLLM(AugmentedLLM[ChatCompletionMessageParam, ChatCompletion
             executor_result = await self.executor.execute(
                 self._openai_client().chat.completions.create, **arguments
             )
-
             response = executor_result[0]
-
             self.logger.debug(
                 "OpenAI completion response:",
                 data=response,

@@ -10,6 +10,7 @@ from mcp_agent.llm.augmented_llm_passthrough import PassthroughLLM
 from mcp_agent.llm.augmented_llm_playback import PlaybackLLM
 from mcp_agent.llm.provider_types import Provider
 from mcp_agent.llm.providers.augmented_llm_anthropic import AnthropicAugmentedLLM
+from mcp_agent.llm.providers.augmented_llm_deepinfra import DeepInfraAugmentedLLM
 from mcp_agent.llm.providers.augmented_llm_deepseek import DeepSeekAugmentedLLM
 from mcp_agent.llm.providers.augmented_llm_generic import GenericAugmentedLLM
 from mcp_agent.llm.providers.augmented_llm_google import GoogleAugmentedLLM
@@ -27,6 +28,7 @@ LLMClass = Union[
     Type[PassthroughLLM],
     Type[PlaybackLLM],
     Type[DeepSeekAugmentedLLM],
+    Type[DeepInfraAugmentedLLM],
     Type[OpenRouterAugmentedLLM],
 ]
 
@@ -84,7 +86,6 @@ class ModelFactory:
         "claude-3-opus-20240229": Provider.ANTHROPIC,
         "claude-3-opus-latest": Provider.ANTHROPIC,
         "deepseek-chat": Provider.DEEPSEEK,
-        #        "deepseek-reasoner": Provider.DEEPSEEK, reinstate on release
     }
 
     MODEL_ALIASES = {
@@ -110,6 +111,7 @@ class ModelFactory:
         Provider.GENERIC: GenericAugmentedLLM,
         Provider.GOOGLE: GoogleAugmentedLLM,  # type: ignore
         Provider.OPENROUTER: OpenRouterAugmentedLLM,
+        Provider.DEEPINFRA: DeepInfraAugmentedLLM
     }
 
     # Mapping of special model names to their specific LLM classes
@@ -121,9 +123,16 @@ class ModelFactory:
     @classmethod
     def parse_model_string(cls, model_string: str) -> ModelConfig:
         """Parse a model string into a ModelConfig object"""
-        # Check if model string is an alias
+
         model_string = cls.MODEL_ALIASES.get(model_string, model_string)
         parts = model_string.split(".")
+
+        if parts[0].lower() == "deepinfra":
+            provider, model_name = model_string.split(".", maxsplit=1)
+            return ModelConfig(
+                provider=provider,
+                model_name=model_name
+            )
 
         # Start with all parts as the model name
         model_parts = parts.copy()
