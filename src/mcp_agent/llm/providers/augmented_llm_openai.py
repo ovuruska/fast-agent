@@ -35,8 +35,6 @@ from mcp_agent.llm.providers.sampling_converter_openai import (
 from mcp_agent.logging.logger import get_logger
 from mcp_agent.mcp.prompt_message_multipart import PromptMessageMultipart
 
-import typesense
-
 
 _logger = get_logger(__name__)
 
@@ -194,9 +192,10 @@ class OpenAIAugmentedLLM(AugmentedLLM[ChatCompletionMessageParam, ChatCompletion
 
             converted_message = self.convert_message_to_message_param(message)
             messages.append(converted_message)
-
+            print(messages)
             message_text = converted_message.content
             if choice.finish_reason in ["tool_calls", "function_call"] and message.tool_calls:
+            
                 if message_text:
                     await self.show_assistant_message(
                         message_text,
